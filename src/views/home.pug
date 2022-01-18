@@ -1,0 +1,10 @@
+extends base.pug
+include mixins/video
+
+block content 
+  h2 Home!
+  each potato in videos 
+    +video(potato)
+  else 
+    li Sorry. Nothing Found.
+  
