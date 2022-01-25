@@ -40,9 +40,10 @@ export const postJoin = async (req, res) => {
 
 export const getLogin = (req, res) => 
   res.render("Login", { pageTitle: "Login" });
+
 export const postLogin = async (req, res) => {
   const { username, password } = req.body;
-  const user = await User.findOne({ username });
+  const user = await User.findOne({ username, socialOnly: false });
   const pageTitle = "Login";
   if (!user) {
     return res.status(400).render("login", {
@@ -112,15 +113,13 @@ export const finishGithubLogin = async (req, res) => {
       (email) => email.primary === true && email.verified === true
     );
     if (!emailObj) {
+      // set notification
       return res.redirect("/login");
     }
-    const existingUser = await User.findOne({ email: emailObj.email });
-    if(existingUser) {
-      req.session.loggedIn = true;
-      req.session.user = existingUser;
-      return res.redirect("/");
-    } else {
-      const user = await User.create({
+    let user = await User.findOne({ email: emailObj.email });
+    if (!user) {
+      user = await User.create({
+        avatarUrl: userData.avatar_url,
         name: userData.name,
         username: userData.login,
         email: emailObj.email,
@@ -128,16 +127,43 @@ export const finishGithubLogin = async (req, res) => {
         socialOnly: true,
         location: userData.location,
       });
-      req.session.loggedIn = true;
-      req.session.user = user;
-      return res.redirect("/");
-    }
+    } 
+    req.session.loggedIn = true;
+    req.session.user = user;
+    return res.redirect("/");
   } else {
     return res.redirect("/login");
   }
 }
 
-export const edit = (req, res) => res.send("Edit User");
-export const remove = (req, res) => res.send("Remove User");
-export const logout = (req, res) => res.send("Log out");
+export const logout = (req, res) => {
+  req.session.destroy();
+  return res.redirect("/");
+};
+
+
+export const getEdit = (req, res) => {
+  return res.render("edit-profile", { pageTitle: "Edit Profile" });
+}
+
+export const postEdit = async (req, res) => {
+  const {
+    body: { name, email, username, location },
+    session: {
+      user: { _id },
+    },
+  } = req;
+  const updatedUser = await User.findByIdAndUpdate(
+    _id,
+    {
+      name,
+      email,
+      username,
+      location,
+    },
+  { new: true }
+  );
+  req.session.user = updatedUser;
+  return res.redirect("/users/edit");
+}
 export const see = (req, res) => res.send("See User");
