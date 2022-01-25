@@ -148,11 +148,34 @@ export const getEdit = (req, res) => {
 
 export const postEdit = async (req, res) => {
   const {
+    // req.body(=edit-profile form에서 POST하려는 값)
     body: { name, email, username, location },
+    // req.session.user(session으로 가지고 있는 유저 값)
     session: {
-      user: { _id },
+      user: { _id, email: sessionEmail, username: sessionUsername },
     },
   } = req;
+
+  // 필요한 것 : form에서 POST하려는 새 값 !== 다른 _id session의 기존 값.
+  // 바꾸려는 값과 같은 값을 사용하고 있는 User가 있는지 체크
+  let searchParam = [];
+  if ( sessionEmail !== email ) {
+    searchParam.push({ email });
+  }
+  if ( sessionUsername !== username ) {
+    searchParam.push({ username });
+  }
+  if ( searchParam.length > 0 ) {
+    const findUser = await User.findOne({ $or: searchParam }); // findOne({ $or : [ {email}, {username}]})과 차이점?
+    // 만약 같은 값을 사용하고 있는 User가 있고, 그 유저가 자기 자신이 아닌 다른 _id의 User일 경우
+    if ( findUser && findUser._id.toString() !== _id ) {
+      return res.status(400).render("edit-profile", {
+        pageTitle: "Edit Profile", 
+        errorMessage: "This username/email is already taken. Try again.",
+      });
+    }
+  }
+  // User.js model에서 mongoose method(findByIdAndUpdate) 사용하여 새로운 값으로 덮어씌우는 과정
   const updatedUser = await User.findByIdAndUpdate(
     _id,
     {
