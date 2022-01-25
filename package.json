@@ -4,7 +4,7 @@
   "description": "The vest way to watch videos.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec babel-node src/server.js"
+    "dev": "nodemon --exec babel-node src/init.js"
   },
   "repository": {
     "type": "git",
@@ -20,8 +20,15 @@
   },
   "homepage": "https://github.com/HiImConan/wetube-reloaded#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
+    "connect-mongo": "^4.6.0",
+    "cross-fetch": "^3.1.5",
+    "dotenv": "^14.2.0",
     "express": "^4.17.2",
+    "express-session": "^1.17.2",
+    "mongoose": "^6.1.7",
     "morgan": "^1.10.0",
+    "node-fetch": "^2.6.1",
     "nodemon": "^2.0.15",
     "pug": "^3.0.2"
   },
