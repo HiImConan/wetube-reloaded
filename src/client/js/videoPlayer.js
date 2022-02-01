@@ -1,3 +1,5 @@
+import fetch from "cross-fetch";
+
 const video = document.querySelector("video");
 const playBtn = document.getElementById("play");
 const playBtnIcon = playBtn.querySelector("i");
@@ -103,7 +105,7 @@ let controlsTimeout = null;
 let controlsMovementTimeout = null;
 
 const hideControls = () => videoControls.classList.remove("showing");
-const showControls = () =>   videoControls.classList.add("showing");
+const showControls = () => videoControls.classList.add("showing");
 
 const handleMouseMove = () => {
   if (controlsTimeout) {
@@ -151,6 +153,12 @@ const handleKeydown = (event) => {
   };
 };
 
+const handleEnded = () => {
+  const { id } = videoContainer.dataset;
+  fetch(`/api/videos/${id}/view`, {
+    method: "POST",
+  }); // fetch()는 api로 request를 보내는 function임.
+};
 
 playBtn.addEventListener("click", handlePlayClick);
 video.addEventListener("click", handlePlayClick);
@@ -158,6 +166,7 @@ muteBtn.addEventListener("click", handleMuteClick);
 volumeRange.addEventListener("input", handleVolumeChange);
 video.addEventListener("loadeddata", handleLoadedMetaData);
 video.addEventListener("timeupdate", handleTimeUpdate);
+video.addEventListener("ended", handleEnded);
 videoContainer.addEventListener("mousemove", handleMouseMove);
 videoContainer.addEventListener("mouseleave", handleMouseLeave);
 timeline.addEventListener("input", handleTimelineChange);
