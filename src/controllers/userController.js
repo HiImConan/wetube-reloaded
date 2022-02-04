@@ -3,8 +3,8 @@ import Video from "../models/Video";
 import fetch from "cross-fetch";
 import bcrypt from "bcrypt";
 
-
-export const getJoin = (req, res) => res.render("root/join", { pageTitle: "Join" });
+export const getJoin = (req, res) =>
+  res.render("root/join", { pageTitle: "Join" });
 
 export const postJoin = async (req, res) => {
   const { name, username, email, password, password2, location } = req.body;
@@ -12,7 +12,7 @@ export const postJoin = async (req, res) => {
   if (password !== password2) {
     return res.status(400).render("root/join", {
       pageTitle,
-      errorMessage: "Password confirmation does not match."
+      errorMessage: "Password confirmation does not match.",
     });
   }
   const exists = await User.exists({ $or: [{ username }, { email }] });
@@ -35,13 +35,11 @@ export const postJoin = async (req, res) => {
     return res.status(400).render("root/join", {
       pageTitle: "Upload Video",
       errorMessage: error._message,
-    })
+    });
   }
 };
 
-
-
-export const getLogin = (req, res) => 
+export const getLogin = (req, res) =>
   res.render("root/login", { pageTitle: "Login" });
 
 export const postLogin = async (req, res) => {
@@ -76,7 +74,7 @@ export const startGithubLogin = (req, res) => {
   const params = new URLSearchParams(config).toString();
   const finalUrl = `${baseUrl}?${params}`;
   return res.redirect(finalUrl);
-}
+};
 
 export const finishGithubLogin = async (req, res) => {
   const baseUrl = "https://github.com/login/oauth/access_token";
@@ -84,20 +82,21 @@ export const finishGithubLogin = async (req, res) => {
     client_id: process.env.GH_CLIENT,
     client_secret: process.env.GH_SECRET,
     code: req.query.code,
-  }
+  };
   const params = new URLSearchParams(config).toString();
   const finalUrl = `${baseUrl}?${params}`;
   const tokenRequest = await (
     await fetch(finalUrl, {
-      method:"POST",
+      method: "POST",
       headers: {
         Accept: "application/json",
       },
     })
   ).json();
-  if ("access_token" in tokenRequest){ // access api
+  if ("access_token" in tokenRequest) {
+    // access api
     const { access_token } = tokenRequest;
-    const apiUrl = "https://api.github.com" 
+    const apiUrl = "https://api.github.com";
     const userData = await (
       await fetch(`${apiUrl}/user`, {
         headers: {
@@ -130,24 +129,24 @@ export const finishGithubLogin = async (req, res) => {
         socialOnly: true,
         location: userData.location,
       });
-    } 
+    }
     req.session.loggedIn = true;
     req.session.user = user;
     return res.redirect("/");
   } else {
     return res.redirect("/login");
   }
-}
+};
 
 export const logout = (req, res) => {
   req.session.destroy();
+  req.flash("info", "Logged Out");
   return res.redirect("/");
 };
 
-
 export const getEdit = (req, res) => {
   return res.render("users/edit-profile", { pageTitle: "Edit Profile" });
-}
+};
 
 export const postEdit = async (req, res) => {
   const {
@@ -162,18 +161,18 @@ export const postEdit = async (req, res) => {
   // 필요한 것 : form에서 POST하려는 새 값 !== 다른 _id session의 기존 값.
   // 바꾸려는 값과 같은 값을 사용하고 있는 User가 있는지 체크
   let searchParam = [];
-  if ( sessionEmail !== email ) {
+  if (sessionEmail !== email) {
     searchParam.push({ email });
   }
-  if ( sessionUsername !== username ) {
+  if (sessionUsername !== username) {
     searchParam.push({ username });
   }
-  if ( searchParam.length > 0 ) {
+  if (searchParam.length > 0) {
     const findUser = await User.findOne({ $or: searchParam }); // findOne({ $or : [ {email}, {username}]})과 차이점? -> 객체가 두 개 반환됨(기존 id + 다른 id), 그 중 기존 객체가 앞순서여서 기존 객체만 리턴됨 -> 경우의 수를 또 나눠야 하는 불상사
     // 만약 같은 값을 사용하고 있는 User가 있고, 그 유저가 자기 자신이 아닌 다른 _id의 User일 경우
-    if ( findUser && findUser._id.toString() !== _id ) {
+    if (findUser && findUser._id.toString() !== _id) {
       return res.status(400).render("users/edit-profile", {
-        pageTitle: "Edit Profile", 
+        pageTitle: "Edit Profile",
         errorMessage: "This username/email is already taken. Try again.",
       });
     }
@@ -188,7 +187,7 @@ export const postEdit = async (req, res) => {
       username,
       location,
     },
-  { new: true }
+    { new: true }
   );
   req.session.user = updatedUser;
   return res.redirect("/users/edit");
@@ -196,9 +195,10 @@ export const postEdit = async (req, res) => {
 
 export const getChangePassword = (req, res) => {
   if (req.session.user.socialOnly === true) {
+    req.flash("error", "Can't change password.");
     return res.redirect("/");
   }
-  return res.render("users/change-password", { pageTitle: "Change Password "});
+  return res.render("users/change-password", { pageTitle: "Change Password " });
 };
 
 export const postChangePassword = async (req, res) => {
@@ -211,24 +211,24 @@ export const postChangePassword = async (req, res) => {
   // await 때문에 그 아래 if 구문 이후에 차례가 오게 됨(가장 최근 비밀번호 사용 가능).
   const user = await User.findById(_id);
   const ok = await bcrypt.compare(oldPassword, user.password);
-  if ( !ok ) {
+  if (!ok) {
     return res.status(400).render("users/change-password", {
       pageTitle: "Change Password",
       errorMessage: "The current password is incorrect.",
-     });
+    });
   }
-  if ( newPassword !== newPasswordConfirmation ) {
+  if (newPassword !== newPasswordConfirmation) {
     return res.status(400).render("users/change-password", {
       pageTitle: "Change Password",
       errorMessage: "The password does not match the confirmation.",
     });
   }
-  
+
   user.password = newPassword;
-  await user.save()
+  await user.save();
+  req.flash("info", "Password Updated");
   return res.redirect("/users/logout");
 };
-
 
 export const see = async (req, res) => {
   const { id } = req.params;
@@ -239,9 +239,9 @@ export const see = async (req, res) => {
       model: "User",
     },
   });
-  if ( !user ) {
+  if (!user) {
     return res.status(404).render("404", {
-      pageTitle: "User not found."
+      pageTitle: "User not found.",
     });
   }
   return res.render("users/profile", {

@@ -13,7 +13,7 @@ const fullScreenBtn = document.getElementById("fullScreen");
 const fullScreenIcon = fullScreenBtn.querySelector("i");
 const videoContainer = document.getElementById("videoContainer");
 const videoControls = document.getElementById("videoControls");
-
+const textarea = document.getElementById("textarea");
 
 let volumeValue = 1;
 video.volume = volumeValue;
@@ -30,9 +30,8 @@ const handlePlayClick = (e) => {
   playBtnIcon.classList = video.paused ? "fas fa-play" : "fas fa-pause";
 };
 
-
 const changeMuteIcon = () => {
-  muteBtnIcon.classList = video.muted 
+  muteBtnIcon.classList = video.muted
     ? "fas fa-volume-mute"
     : "fas fa-volume-up";
 };
@@ -59,8 +58,8 @@ const handleVolumeChange = (event) => {
   video.volume = value;
 };
 
-const formatTime = (seconds) => 
-  new Date(seconds *1000).toISOString().substring(14,19);
+const formatTime = (seconds) =>
+  new Date(seconds * 1000).toISOString().substring(14, 19);
 
 const handleLoadedMetaData = () => {
   totalTime.innerText = formatTime(Math.floor(video.duration));
@@ -100,7 +99,6 @@ const handleFullscreen = () => {
   }
 };
 
-
 let controlsTimeout = null;
 let controlsMovementTimeout = null;
 
@@ -117,40 +115,49 @@ const handleMouseMove = () => {
     controlsMovementTimeout = null;
   }
   showControls();
-  controlsMovementTimeout = setTimeout(hideControls, 3000)
+  controlsMovementTimeout = setTimeout(hideControls, 3000);
 };
 
 const handleMouseLeave = () => {
   controlsTimeout = setTimeout(hideControls, 3000); // setTimeout은 특정 id 값을 반환함
 };
 
-
-
 const handleKeydown = (event) => {
-  switch(event.keyCode) {
-    case 77: handleMuteClick(); // mute
+  if (event.target.id === "textarea") {
+    return;
+  }
+  switch (event.keyCode) {
+    case 77:
+      handleMuteClick(); // mute
       break;
-    case 70: handleFullscreen(); // fullscreen
+    case 70:
+      handleFullscreen(); // fullscreen
       break;
 
-    case 37: video.currentTime -= 5; // ⬅️
+    case 37:
+      video.currentTime -= 5; // ⬅️
       break;
-    case 39: video.currentTime += 5; // ➡️
+    case 39:
+      video.currentTime += 5; // ➡️
       break;
-    case 38: volumeValue += 0.1; // ⬆️
-        volumeRange.value = volumeValue;
-        video.volume = volumeRange.value;
-        event.preventDefault();
+    case 38:
+      volumeValue += 0.1; // ⬆️
+      volumeRange.value = volumeValue;
+      video.volume = volumeRange.value;
+      event.preventDefault();
       break;
-    case 40: volumeValue -= 0.1; // ⬇️
-        volumeRange.value = volumeValue;
-        video.volume = volumeRange.value;
-        event.preventDefault();
-        changeMuteIcon();
+    case 40:
+      volumeValue -= 0.1; // ⬇️
+      volumeRange.value = volumeValue;
+      video.volume = volumeRange.value;
+      event.preventDefault();
+      changeMuteIcon();
       break;
-    case 32: handlePlayClick(); // spacebar
+    case 32:
+      handlePlayClick(); // spacebar
+      event.preventDefault(); // prevent scroll down
       break;
-  };
+  }
 };
 
 const handleEnded = () => {
