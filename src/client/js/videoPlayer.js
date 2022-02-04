@@ -13,7 +13,6 @@ const fullScreenBtn = document.getElementById("fullScreen");
 const fullScreenIcon = fullScreenBtn.querySelector("i");
 const videoContainer = document.getElementById("videoContainer");
 const videoControls = document.getElementById("videoControls");
-const textarea = document.getElementById("textarea");
 
 let volumeValue = 1;
 video.volume = volumeValue;

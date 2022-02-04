@@ -155,3 +155,12 @@ export const createComment = async (req, res) => {
   video.save();
   return res.status(201).json({ newCommentId: comment._id }); // 프론트에서 JS로 껍데기 코맨트만 만든 것에 ㄹㅇ id를 부여해서 delete도 가능하게 만드는 작업임.
 };
+
+export const deleteComment = async (req, res) => {
+  const { id } = req.params;
+  const { _id } = await Comment.findById(id);
+  if (String(_id) === String(id)) {
+    await Comment.findByIdAndDelete(id);
+    return res.sendStatus(201);
+  }
+};
