@@ -47,4 +47,4 @@ app.use("/videos", videoRouter);
 app.use("/users", userRouter);
 app.use("/api", apiRouter);
 
-export default app;
+export default app; // npm run dev:server

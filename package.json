@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "description": "The vest way to watch videos.",
   "scripts": {
+    "start": "node build/init.js",
+    "build": "npm run build:server && npm run build:assets",
+    "build:server": "babel src -d build",
+    "build:assets": "webpack --mode=production",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev:server": "nodemon",
-    "dev:assets": "webpack"
+    "dev:assets": "webpack --mode=development -w"
   },
   "repository": {
     "type": "git",
@@ -39,7 +43,8 @@
     "regenerator-runtime": "^0.13.9"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.5",
+    "@babel/cli": "^7.17.0",
+    "@babel/core": "^7.17.0",
     "@babel/node": "^7.16.7",
     "@babel/preset-env": "^7.16.5",
     "babel-loader": "^8.2.3",
