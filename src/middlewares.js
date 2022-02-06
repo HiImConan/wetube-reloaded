@@ -28,7 +28,7 @@ export const localsMiddleware = (req, res, next) => {
   res.locals.loggedIn = Boolean(req.session.loggedIn);
   res.locals.siteName = "Wetube";
   res.locals.loggedInUser = req.session.user || {};
-  res.locals.isHeroku = isHeroku;
+  res.locals.isHeroku = isHeroku; // locals에 저장함으로써, pug에서도 불러올 수 있음
   next();
 };
 
@@ -60,7 +60,7 @@ export const avatarUpload = multer({
 export const videoUpload = multer({
   dest: "uploads/videos/",
   limits: {
-    fileSize: 10000000,
+    fileSize: 50000000,
   },
   storage: isHeroku ? s3VideoUploader : undefined,
 });
