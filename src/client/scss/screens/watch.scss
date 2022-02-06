@@ -20,15 +20,44 @@
 .video__comments {
   display: flex;
   flex-direction: column;
-  max-width: 320px;
+  max-width: 100%;
   width: 100%;
   margin: 0 auto;
   margin-top: 20px;
   .video__comment {
     padding: 10px;
     border-radius: 5px;
-    background-color: white;
-    color: black;
+    color: white;
     margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    .video__comment-avatar {
+      img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+    }
+    .video__comment-textarea {
+      max-height: 600px;
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      margin: 0px 10px;
+      #usernameComment {
+        margin-bottom: 5px;
+        font-weight: 600;
+      }
+    }
+    span {
+      font-size: 15px;
+    }
+    .video__comment-buttons {
+      button {
+        all: unset;
+        padding: 5px;
+        font-weight: 400;
+      }
+    }
   }
 }

@@ -11,15 +11,34 @@ const addComment = (text, id) => {
   const newComment = document.createElement("li");
   newComment.dataset.id = id;
   newComment.className = "video__comment";
-  const icon = document.createElement("i");
-  icon.className = "fas fa-comment";
-  const span = document.createElement("span");
-  span.innerText = `${text}`;
+
+  /*
+  const userAvatarDiv = document.createElement("div");
+  userAvatarDiv.className = "video__comment-avatar";
+  const userAvatarImg = document.createElement("img");
+  const imgSrc = document.querySelector("imgsrc");
+  userAvatarImg.srcset = `${imgSrc.src}`;
+  userAvatarImg.crossOrigin = "crossorigin";
+  userAvatarDiv.appendChild(userAvatarImg);
+  newComment.appendChild(userAvatarDiv);
+  */
+
+  const commentTextareaDiv = document.createElement("div");
+  commentTextareaDiv.className = "video__comment-textarea";
+  const usernameSpan = document.createElement("span");
+  usernameSpan.innerText = "걍해";
+  const textSpan = document.createElement("span");
+  textSpan.innerText = `${text}`;
+  commentTextarea.appendChild(usernameSpan, textSpan);
+
+  const deleteButtonDiv = document.createElement("div");
+  deleteButtonDiv.className = "video__comment-buttons";
   const deleteButton = document.createElement("button");
   deleteButton.className = "fas fa-trash-alt";
-  newComment.appendChild(icon);
-  newComment.appendChild(span);
-  newComment.appendChild(deleteButton);
+  deleteButtonDiv.appendChild(deleteButton);
+
+  newComment.appendChild(commentTextareaDiv);
+  newComment.appendChild(deleteButtonDiv);
   videoComments.prepend(newComment); // append - at the end, prepend - in front
 };
 

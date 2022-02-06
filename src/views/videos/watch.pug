@@ -33,18 +33,23 @@ block content
   if loggedIn
     div.video__add-comments
       form.video__comment-form#commentForm
-        textarea(cols="30", rows="10", placeholder="Write a nice comment...")#textarea
+        textarea(cols="100", rows="1", placeholder="Write a nice comment...")#textarea
         button Add Comment
 
   div.video__comments 
     ul 
       each comment in video.comments.reverse()
         li.video__comment#videoComment(data-id=comment.id)
-          i.fas.fa-comment
-          span  #{comment.text}
+          div.video__comment-avatar
+            img(src=loggedInUser.avatarUrl, crossorigin)#imgsrc
+          div.video__comment-textarea
+            span#usernameComment  #{loggedInUser.name}
+            span#textComment  #{comment.text}
           if String(comment.owner._id) === String(loggedInUser._id)
-            button#deleteComment
-              i.fas.fa-trash-alt
+            div.video__comment-buttons
+              button#deleteComment
+                i.fas.fa-trash-alt
+                |  삭제
 
 
 block scripts 
