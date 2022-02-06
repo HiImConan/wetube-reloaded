@@ -178,10 +178,11 @@ export const postEdit = async (req, res) => {
     }
   }
   // User.js model에서 mongoose method(findByIdAndUpdate) 사용하여 새로운 값으로 덮어씌우는 과정
+  const isHeroku = process.env.NODE_ENV === "production";
   const updatedUser = await User.findByIdAndUpdate(
     _id,
     {
-      avatarUrl: file ? file.location : avatarUrl,
+      avatarUrl: file ? (isHeroku ? file.location : file.path) : avatarUrl,
       name,
       email,
       username,
