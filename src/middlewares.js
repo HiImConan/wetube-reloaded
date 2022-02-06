@@ -15,11 +15,13 @@ const s3ImageUploader = multerS3({
   s3: s3,
   bucket: "wetube-kwak/images",
   acl: "public-read",
+  contentType: multerS3.AUTO_CONTENT_TYPE,
 });
 const s3VideoUploader = multerS3({
   s3: s3,
   bucket: "wetube-kwak/videos",
   acl: "public-read",
+  contentType: multerS3.AUTO_CONTENT_TYPE,
 });
 
 export const localsMiddleware = (req, res, next) => {
@@ -60,5 +62,5 @@ export const videoUpload = multer({
   limits: {
     fileSize: 10000000,
   },
-  storage: isHeroku ? s3VideoUploade : undefined,
+  storage: isHeroku ? s3VideoUploader : undefined,
 });
