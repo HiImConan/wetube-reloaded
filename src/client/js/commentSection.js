@@ -29,7 +29,8 @@ const addComment = (text, id) => {
   commentTextareaDiv.className = "video__comment-textarea";
   const usernameSpan = document.createElement("span");
   usernameSpan.className = ".video__comment-username";
-  usernameSpan.innerText = "걍해";
+  const usernameId = document.querySelector(".video__comment-username");
+  usernameSpan.innerText = usernameId.innerText;
   const textSpan = document.createElement("span");
   textSpan.className = ".video__comment-textbox";
   textSpan.innerText = `${text}`;
