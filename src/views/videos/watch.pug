@@ -43,8 +43,8 @@ block content
           div.video__comment-avatar
             img(src=loggedInUser.avatarUrl, crossorigin)#imgsrc
           div.video__comment-textarea
-            span#usernameComment  #{loggedInUser.name}
-            span#textComment  #{comment.text}
+            span.video__comment-username  #{loggedInUser.name}
+            span.video__comment-textbox  #{comment.text}
           if String(comment.owner._id) === String(loggedInUser._id)
             div.video__comment-buttons
               button#deleteComment
